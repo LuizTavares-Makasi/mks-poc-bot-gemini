@@ -1,7 +1,3 @@
-The full tutorial is here: https://proflead.dev/posts/ai-chatbot-using-python-and-gemini-api/
-
-The video tutorial is here: https://www.youtube.com/@proflead/videos?sub_confirmation=1
-
 # Configuração do Ambiente e Dependências
 
 Este guia fornece instruções sobre como configurar um ambiente virtual e instalar as dependências necessárias para o projeto.

@@ -48,4 +48,8 @@ Depois que o ambiente virtual estiver ativado, você pode usar o pip para instal
 
 ## Próximos Passos
 
-Após concluir as etapas acima, você estará pronto para prosseguir com as próximas etapas do seu projeto.
+Após concluir as etapas acima, você estará pronto para prosseguir com as próximas etapas do seu projeto. Para ter certeza de que está funcionando bem, vamos executá-lo.
+Use este comando:
+    ```bash
+    python3 app.py
+    ```

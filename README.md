@@ -53,3 +53,13 @@ Use este comando:
     ```
     python3 app.py
     ```
+
+## Para Mais Informações
+
+1. **Leia o Tutorial Completo**
+
+   Acesse o tutorial completo sobre como criar um chatbot de IA usando Python e a API Gemini [aqui](https://proflead.dev/posts/ai-chatbot-using-python-and-gemini-api/).
+
+2. **Assista ao Vídeo Tutorial**
+
+   Confira o vídeo tutorial no canal [ProfLead no YouTube](https://www.youtube.com/@proflead/videos?sub_confirmation=1) para um passo a passo visual.

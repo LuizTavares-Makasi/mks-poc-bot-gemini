@@ -3,6 +3,8 @@
 
 import json
 import os
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
 
 # Flask: Cria a aplicação web Flask.
 # jsonify: Converte dados para o formato JSON para respostas.
@@ -23,7 +25,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 app = Flask(__name__)
 
 # Define uma variável de ambiente GOOGLE_API_KEY com uma chave de API especificada.
-os.environ["GOOGLE_API_KEY"] = "AIzaSyCKybiE4Jc8SGJ4sljig5qsSIaCAv9DUEk"; 
+os.environ["GOOGLE_API_KEY"] = "AIzaSyCzXYSsvzfLBA9iLeHrch9iaG7xB6AZ3A8"; 
 
 # Define uma rota para a página inicial (/) que envia o arquivo index.html do diretório web.
 @app.route('/')

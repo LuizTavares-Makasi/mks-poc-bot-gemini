@@ -4,26 +4,205 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gemini API</title>
+  <title>Makasí Chatbot</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #eef2f7;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    main {
+      width: 350px;
+      background-color: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    h1 {
+      font-size: 20px;
+      margin-bottom: 15px;
+      text-align: center;
+      color: #333;
+    }
+
+    .chat-box {
+      flex-grow: 1;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      padding: 10px;
+      max-height: 400px;
+    }
+
+    .message-wrapper {
+      display: flex;
+      align-items: flex-start;
+      margin: 10px 0;
+    }
+
+    .message-wrapper.bot-message {
+      flex-direction: row;
+    }
+
+    .message-wrapper.user-message {
+      flex-direction: row-reverse;
+    }
+
+    .profile-img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin: 0 10px;
+      background-color: #ddd;
+      object-fit: cover;
+    }
+
+    .message {
+      max-width: 80%;
+      padding: 10px 15px;
+      border-radius: 15px;
+      line-height: 1.5;
+      font-size: 14px;
+      position: relative;
+      word-wrap: break-word;
+    }
+
+    .user-message .message {
+      background-color: #d1e7dd;
+      color: #000;
+      text-align: right;
+    }
+
+    .bot-message .message {
+      background-color: #f0f0f5;
+      color: #000;
+      text-align: left;
+    }
+
+    .prompt-box {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .prompt-box input {
+      flex-grow: 1;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 25px;
+      font-size: 14px;
+    }
+
+    .prompt-box button {
+      padding: 10px 15px;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      border-radius: 25px;
+      cursor: pointer;
+    }
+
+    .prompt-box button:hover {
+      background-color: #0056b3;
+    }
+  </style>
 </head>
 
 <body>
   <main>
-    <h1>Gemini API</h1>
-    <form>
+    <h1>Makasí Chatbot</h1>
+    <div class="chat-box" id="chat-box">
+      <div class="message-wrapper bot-message">
+        <img src="https://via.placeholder.com/40" alt="Bot Profile" class="profile-img">
+        <div class="message">Olá! Como posso ajudar?</div>
+      </div>
+    </div>
+    <form id="chat-form">
       <div class="prompt-box">
-        <label>
-          <input name="prompt" placeholder="Enter instructions here" type="text"
-            value="">
-        </label>
-        <button type="submit">Go</button>
+        <input name="prompt" id="prompt-input" placeholder="Digite sua mensagem aqui..." type="text" value="">
+        <button type="submit">Enviar</button>
       </div>
     </form>
-    <p class="output">(Results will appear here)</p>
   </main>
-  <script type="module" src="/main.js"></script>
-  <script src="https://unpkg.com/markdown-it@8.4.2/dist/markdown-it.min.js"></script>
+  <script type="module">
+    import { streamGemini } from './gemini-api.js';
+
+    document.getElementById('chat-form').addEventListener('submit', async function(event) {
+      event.preventDefault();
+
+      const chatBox = document.getElementById('chat-box');
+      const promptInput = document.getElementById('prompt-input');
+      const userMessage = promptInput.value.trim();
+
+      if (userMessage !== "") {
+        // Adiciona a mensagem do usuário na área de chat
+        const userMessageWrapper = document.createElement('div');
+        userMessageWrapper.className = 'message-wrapper user-message';
+        const userMessageElement = document.createElement('div');
+        userMessageElement.className = 'message';
+        userMessageElement.textContent = `${userMessage}`;
+        userMessageWrapper.appendChild(userMessageElement);
+        chatBox.appendChild(userMessageWrapper);
+
+        // Limpa o campo de texto
+        promptInput.value = '';
+
+        // Exibe "Respondendo..." enquanto a resposta não chega
+        const botMessageWrapper = document.createElement('div');
+        botMessageWrapper.className = 'message-wrapper bot-message';
+        const botProfileImg = document.createElement('img');
+        botProfileImg.src = 'https://via.placeholder.com/40';
+        botProfileImg.alt = 'Bot Profile';
+        botProfileImg.className = 'profile-img';
+        const botMessageElement = document.createElement('div');
+        botMessageElement.className = 'message';
+        botMessageElement.textContent = 'Respondendo...';
+        botMessageWrapper.appendChild(botProfileImg);
+        botMessageWrapper.appendChild(botMessageElement);
+        chatBox.appendChild(botMessageWrapper);
+
+        // Rola o chat box para a última mensagem
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        try {
+          // Chama a API usando a função streamGemini
+          let contents = [
+            {
+              type: "text",
+              text: userMessage,
+            }
+          ];
+
+          let stream = streamGemini({
+            model: 'gemini-pro',
+            contents,
+          });
+
+          let botResponse = '';
+          for await (let chunk of stream) {
+            botResponse += chunk;
+          }
+
+          // Atualiza a resposta do bot no chat
+          botMessageElement.textContent = `${botResponse}`;
+        } catch (e) {
+          botMessageElement.textContent = 'Erro ao comunicar com o chatbot. Tente novamente mais tarde.';
+          console.error('Erro ao obter resposta do bot:', e);
+        }
+
+        // Rola o chat box para a última mensagem
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+    });
+  </script>
 </body>
 
 </html>

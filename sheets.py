@@ -1,16 +1,17 @@
 import os.path
-
+import json
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-# If modifying these scopes, delete the file token.json.
-SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 
-# The ID and range of a sample spreadsheet.
-SAMPLE_SPREADSHEET_ID = "1-i__pdWEk3Rtb4xyfTde06JCH39a6ICloiw-VZTOWh0"
+# Defina SCOPES e SAMPLE_SPREADSHEET_ID a partir do JSON
+with open('config/credentials.json') as f:
+    credentials = json.load(f)
+SCOPES = credentials["SCOPES"]
+SAMPLE_SPREADSHEET_ID = credentials["SAMPLE_SPREADSHEET_ID"]
 SAMPLE_RANGE_NAME = "data_base!A:E"
 
 

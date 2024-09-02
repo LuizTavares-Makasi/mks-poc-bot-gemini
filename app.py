@@ -25,7 +25,6 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 app = Flask(__name__)
 
 # Define uma variável de ambiente GOOGLE_API_KEY com uma chave de API especificada.
-# os.environ["GOOGLE_API_KEY"] = "AIzaSyCzXYSsvzfLBA9iLeHrch9iaG7xB6AZ3A8"; 
 with open('config/credentials.json') as f:
     credentials = json.load(f)
 os.environ["GOOGLE_API_KEY"] = credentials["GOOGLE_API_KEY"]
